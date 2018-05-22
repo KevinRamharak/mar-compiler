@@ -1,0 +1,11 @@
+# personal
+.vscode/
+
+# dependencies
+node_modules/
+
+# structure
+bin/*
+build/*
+
+!**/.gitkeep
