@@ -1,0 +1,6 @@
+--ui mocha-typescript
+--require source-map-support/register
+
+./build/test/index.js
+
+--recursive ./build/test/**/*.js
