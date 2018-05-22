@@ -1,12 +1,8 @@
 {
     "defaultSeverity": "error",
-    "extends": [
-        "tslint:latest",
-        "tslint-config-prettier"
-    ],
+    "extends": ["tslint:latest", "tslint-config-prettier"],
     "jsRules": {},
     "rules": {
-        "arrow-parens": true,
         "arrow-return-shorthand": true,
         "no-invalid-template-strings": true,
         "variable-name": [

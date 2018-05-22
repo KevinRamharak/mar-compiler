@@ -52,12 +52,43 @@ export function parseNumberToken(
                     );
                 }
 
+                let float = false;
+                let afterDot = '';
                 next = stream.peek();
-                // #TODO: see above link and https://en.wikipedia.org/wiki/Hexadecimal#Rational_numbers and https://github.com/dankogai/js-hexfloat
-                if (next === '.' || next === 'p' || next === 'P') {
-                    throw new NotImplementedError(
-                        'invalid floating point literal :: hexadecimal floating point is not implemented yet'
-                    );
+                if (next === '.') {
+                    stream.consume();
+                    float = true;
+                    while (character.is.hexadecimal(stream.peek())) {
+                        afterDot = stream.next();
+                    }
+                }
+
+                let exponential = '';
+                if (next === 'p' || next === 'P') {
+                    stream.consume();
+                    float = true;
+                    while (character.is.digit(stream.peek())) {
+                        exponential += stream.consume();
+                    }
+                }
+
+                if (float) {
+                    let floatVal = parseInt(word, 16);
+                    if (afterDot) {
+                        floatVal += 16 / parseInt(afterDot, 16);
+                    }
+                    if (exponential) {
+                        const exponentialVal = parseInt(exponential, 10);
+                        floatVal = floatVal * 2 ** exponentialVal;
+                    }
+                    next = stream.peek();
+                    if (next === 'f' || next === 'F') {
+                        stream.consume();
+                        width = 32;
+                    } else {
+                        width = 64;
+                    }
+                    return new FloatToken(floatVal, { width }, meta);
                 }
                 break;
             default:
