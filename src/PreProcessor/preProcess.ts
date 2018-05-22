@@ -1,13 +1,12 @@
+import { Dict } from '../util';
 
-import { Dict } from "../util";
-
-import { IToken } from "@/Token";
+import { IToken } from '@/Token';
 
 import {
     addNewlineIfNeeded,
     removeBackslashNewlineSequences,
     tokenize,
-} from ".";
+} from '.';
 
 export interface PreProcessorResult {
     tokens: IToken[];
@@ -19,8 +18,11 @@ export interface PreProcessorResult {
 /**
  * does the first 4 phases of http://en.cppreference.com/w/c/language/translation_phases
  */
-export function preProcess(content: string, filename: string = "[string]", preDefined: Dict = {}): PreProcessorResult {
-
+export function preProcess(
+    content: string,
+    filename: string = '[string]',
+    preDefined: Dict = {}
+): PreProcessorResult {
     const warnings: string[] = [];
     const errors: string[] = [];
 
@@ -32,6 +34,9 @@ export function preProcess(content: string, filename: string = "[string]", preDe
     const phase_2b = addNewlineIfNeeded(phase_2a);
 
     const phase_3 = tokenize(phase_2b, filename);
+
+    warnings.push(...phase_3.warnings);
+    errors.push(...phase_3.errors);
 
     // const phase_4 = performPreProcessing(phase_3, preDefined);
 

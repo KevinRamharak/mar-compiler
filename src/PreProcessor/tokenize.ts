@@ -1,8 +1,7 @@
-
-import { CharacterStream } from "@/CharacterStream";
-import { EOFError } from "@/Error";
-import { IToken, Token, TokenType } from "@/Token";
-import { character } from "@/util";
+import { CharacterStream } from '@/CharacterStream';
+import { EOFError, InvalidIntegerTokenError } from '@/Error';
+import { IToken, Token, TokenType } from '@/Token';
+import { character } from '@/util';
 
 import {
     parseFloatToken,
@@ -10,7 +9,7 @@ import {
     parseNumberToken,
     parseSingleLineComment,
     sequences,
-} from ".";
+} from '.';
 
 export interface TokenizerResult {
     tokens: IToken[];
@@ -50,13 +49,13 @@ export function tokenize(input: string, filename: string): TokenizerResult {
         }
 
         // check for comments
-        if (char === "/") {
+        if (char === '/') {
             const next = stream.peek();
-            if (next === "/") {
+            if (next === '/') {
                 stream.consume();
                 parseSingleLineComment(stream);
                 continue;
-            } else if (next === "*") {
+            } else if (next === '*') {
                 stream.consume();
                 parseMultiLineComment(stream);
                 continue;
@@ -80,13 +79,13 @@ export function tokenize(input: string, filename: string): TokenizerResult {
         }
 
         // we make a special case for '.' because it could be a floating point literal
-        if (char === ".") {
+        if (char === '.') {
             if (character.is.digit(stream.peek())) {
-                // parsing is easier with an implied '0' in front of the '.'
-                const token = parseFloatToken("0" + char, stream, meta);
+                const token = parseFloatToken(char, stream, meta);
                 tokens.push(token);
                 continue;
-            } else { // just a dot
+            } else {
+                // just a dot
                 tokens.push(new Token(TokenType.Dot, char, meta));
                 continue;
             }
@@ -94,8 +93,16 @@ export function tokenize(input: string, filename: string): TokenizerResult {
 
         // numbers -> integers & floats
         if (character.is.digit(char)) {
-            const token = parseNumberToken(char, stream, meta);
-            tokens.push(token);
+            try {
+                const token = parseNumberToken(char, stream, meta);
+                tokens.push(token);
+            } catch (e) {
+                if (!(e instanceof InvalidIntegerTokenError)) {
+                    throw e;
+                } else {
+                    errors.push(e.message);
+                }
+            }
             continue;
         }
 
