@@ -1,8 +1,11 @@
 import { CharacterStream } from '@/CharacterStream';
-import { InvalidIntegerTokenError, NotImplementedError } from '@/Error';
+import {
+    InvalidFloatTokenError,
+    InvalidIntegerTokenError,
+    NotImplementedError,
+} from '@/Error';
 import { FloatToken, IntegerToken, TokenMeta } from '@/Token';
-import { character } from '@/util';
-
+import { character, parseHexadecimalFloat } from '@/util';
 import { parseFloatToken } from '.';
 
 /**
@@ -53,34 +56,41 @@ export function parseNumberToken(
                 }
 
                 let float = false;
-                let afterDot = '';
                 next = stream.peek();
                 if (next === '.') {
                     stream.consume();
                     float = true;
                     while (character.is.hexadecimal(stream.peek())) {
-                        afterDot = stream.next();
+                        word = stream.next();
                     }
+                    next = stream.peek();
                 }
 
+                let exponentialSign = false;
                 let exponential = '';
                 if (next === 'p' || next === 'P') {
                     stream.consume();
+                    exponentialSign = true;
                     float = true;
                     while (character.is.digit(stream.peek())) {
-                        exponential += stream.consume();
+                        exponential += stream.next();
                     }
                 }
 
+                if (float && !exponentialSign) {
+                    throw new InvalidFloatTokenError(
+                        `invalid hexadecimal float literal :: missing exponential sign 'p' for '${word}'`
+                    );
+                }
+
                 if (float) {
-                    let floatVal = parseInt(word, 16);
-                    if (afterDot) {
-                        floatVal += 16 / parseInt(afterDot, 16);
+                    if (!exponential) {
+                        throw new InvalidFloatTokenError(
+                            `invalid hexadecimal float literal :: missing exponential for '${word}'`
+                        );
                     }
-                    if (exponential) {
-                        const exponentialVal = parseInt(exponential, 10);
-                        floatVal = floatVal * 2 ** exponentialVal;
-                    }
+                    const floatVal = parseHexadecimalFloat(word, exponential);
+
                     next = stream.peek();
                     if (next === 'f' || next === 'F') {
                         stream.consume();

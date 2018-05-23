@@ -1,14 +1,7 @@
+import character from './character';
+import Dict from './Dict';
+import error from './error';
+import parseHexadecimalFloat from './parseHexadecimalFloat';
+import sequence from './sequence';
 
-import error from "./error";
-
-import character from "./character";
-import sequence from "./sequence";
-
-import Dict from "./Dict";
-
-export {
-    character,
-    sequence,
-    Dict,
-    error,
-};
+export { character, Dict, error, parseHexadecimalFloat, sequence };

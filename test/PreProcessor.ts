@@ -490,6 +490,46 @@ describe('PreProcessor', () => {
         });
     });
 
+    it('should preProcess hexadecimal floating point literals correctly', () => {
+        const tests: { [key: string]: FloatToken } = {
+            '0x0p0': new FloatToken(0, { width: 64 }, meta),
+            '0x0.p0': new FloatToken(0, { width: 64 }, meta),
+            '0x0p0f': new FloatToken(0, { width: 32 }, meta),
+        };
+
+        const keys = Object.keys(tests);
+        const testString = keys.join(' ');
+        const result = preProcess(testString, '[test]');
+
+        assert(
+            keys.length === result.tokens.length,
+            `expected '${keys.length}' amount of tokens, instead got '${
+                result.tokens.length
+            }'`
+        );
+
+        result.tokens.forEach((token, i) => {
+            assert(
+                token.type === TokenType.FloatLiteral,
+                `expected '${
+                    keys[i]
+                }' to result into 'token.type' of 'TokenType.FloatLiteral', instead got '${
+                    TokenType[token.type]
+                }'`
+            );
+            assert(
+                token.value === tests[keys[i]].value,
+                `expected '${keys[i]}' to result into 'token.value' of '${
+                    tests[keys[i]].value
+                }', instead got '${token.value}'`
+            );
+            deepStrictEqual(
+                token.info,
+                tests[keys[i]].info,
+                `expected '${keys[i]}' to result in a specific 'FloatTypeInfo'`
+            );
+        });
+    });
     // strings
     it('should preProcess character literals correctly', () => {
         const literals: string[] = [
