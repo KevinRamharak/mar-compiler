@@ -58,10 +58,10 @@ export function parseNumberToken(
                 let float = false;
                 next = stream.peek();
                 if (next === '.') {
-                    stream.consume();
+                    word += stream.next();
                     float = true;
                     while (character.is.hexadecimal(stream.peek())) {
-                        word = stream.next();
+                        word += stream.next();
                     }
                     next = stream.peek();
                 }
@@ -72,6 +72,10 @@ export function parseNumberToken(
                     stream.consume();
                     exponentialSign = true;
                     float = true;
+                    next = stream.peek();
+                    if (next === '-') {
+                        exponential += stream.next();
+                    }
                     while (character.is.digit(stream.peek())) {
                         exponential += stream.next();
                     }

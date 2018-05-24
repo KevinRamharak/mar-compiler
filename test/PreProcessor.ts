@@ -495,6 +495,8 @@ describe('PreProcessor', () => {
             '0x0p0': new FloatToken(0, { width: 64 }, meta),
             '0x0.p0': new FloatToken(0, { width: 64 }, meta),
             '0x0p0f': new FloatToken(0, { width: 32 }, meta),
+            '0x1.999999999999ap-4': new FloatToken(0.1, { width: 64 }, meta),
+            '0x1.99999ap-4f': new FloatToken(0.1, { width: 32 }, meta),
         };
 
         const keys = Object.keys(tests);
