@@ -1,8 +1,12 @@
+import { IToken, TokenMeta, TokenType } from '.';
+import { CharacterTypeInfo } from '../TypeInfo';
 
-import { IToken, TokenMeta, TokenType } from ".";
-import { StringTypeInfo } from "../TypeInfo";
-
-export default class CharacterToken implements IToken<Buffer, StringTypeInfo> {
+export default class CharacterToken
+    implements IToken<Buffer, CharacterTypeInfo> {
     public readonly type = TokenType.CharacterLiteral;
-    constructor(public readonly value: Buffer, public readonly info: StringTypeInfo, public readonly meta: TokenMeta) { }
+    constructor(
+        public readonly value: Buffer,
+        public readonly info: CharacterTypeInfo,
+        public readonly meta: TokenMeta
+    ) {}
 }

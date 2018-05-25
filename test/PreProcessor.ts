@@ -544,85 +544,89 @@ describe('PreProcessor', () => {
             /* escape characters */
             "'\\a'": new CharacterToken(
                 Buffer.from([0x7]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\b'": new CharacterToken(
                 Buffer.from([0x8]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\f'": new CharacterToken(
                 Buffer.from([0xc]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\n'": new CharacterToken(
                 Buffer.from([0xa]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\r'": new CharacterToken(
                 Buffer.from([0xd]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\t'": new CharacterToken(
                 Buffer.from([0x9]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\v'": new CharacterToken(
                 Buffer.from([0xb]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\''": new CharacterToken(
                 Buffer.from([0x27]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\"'": new CharacterToken(
                 Buffer.from([0x22]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\?'": new CharacterToken(
                 Buffer.from([0x3f]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\e'": new CharacterToken(
                 Buffer.from([0x1b]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\\\'": new CharacterToken(
                 Buffer.from([0x5c]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             /* octal */
-            "'\\0'": new CharacterToken(Buffer.from([0]), { length: 1 }, meta),
+            "'\\0'": new CharacterToken(
+                Buffer.from([0]),
+                { length: 1, width: 8 },
+                meta
+            ),
             "'\\40'": new CharacterToken(
                 Buffer.from([0o40]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             /* hex */
             "'\\xFF'": new CharacterToken(
                 Buffer.from([0xff]),
-                { length: 1 },
+                { length: 1, width: 8 },
                 meta
             ),
             "'\\xFFFF'": new CharacterToken(
                 Buffer.from([0xff, 0xff]),
-                { length: 2 },
+                { length: 2, width: 8 },
                 meta
             ),
             "'\\xABCD'": new CharacterToken(
                 Buffer.from([0xab, 0xcd]),
-                { length: 2 },
+                { length: 2, width: 8 },
                 meta
             ),
             /* unicode 4 hexes */
@@ -630,7 +634,7 @@ describe('PreProcessor', () => {
             /* #NOTE: utf-8 encoding assumed */
             "'\\uABCD'": new CharacterToken(
                 Buffer.from('\uABCD'),
-                { length: Buffer.from('\uABCD').length },
+                { length: Buffer.from('\uABCD').length, width: 8 },
                 meta
             ),
             /* unicode 8 hexes */
@@ -638,7 +642,7 @@ describe('PreProcessor', () => {
             /* #NOTE: utf-8 encoding assumed */
             "'\\U0001F4A9'": new CharacterToken(
                 Buffer.from('\u{1F4A9}'),
-                { length: Buffer.from('\u{1F4A9}').length },
+                { length: Buffer.from('\u{1F4A9}').length, width: 8 },
                 meta
             ),
         };
@@ -646,7 +650,7 @@ describe('PreProcessor', () => {
         literals.forEach(literal => {
             tests[`'${literal}'`] = new CharacterToken(
                 Buffer.from(literal),
-                { length: literal.length },
+                { length: literal.length, width: 8 },
                 meta
             );
         });
@@ -674,9 +678,11 @@ describe('PreProcessor', () => {
             deepStrictEqual(
                 token.value,
                 tests[keys[i]].value,
-                `expected '${keys[i]}' to result into 'token.value' of '${
+                `expected '${
+                    keys[i]
+                }' to result into 'token.value' of '${Array.from(
                     tests[keys[i]].value
-                }', instead got '${token.value}'`
+                )}', instead got '${Array.from(token.value as Buffer)}'`
             );
             deepStrictEqual(
                 token.info,
@@ -756,8 +762,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
-        //tslint:disable
-        console.log(testString, result.tokens);
+
         assert(
             keys.length === result.tokens.length,
             `expected '${keys.length}' amount of tokens, instead got '${

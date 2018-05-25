@@ -4,6 +4,7 @@ import { IToken, Token, TokenType } from '@/Token';
 import { character } from '@/util';
 
 import {
+    parseCharacterLiteral,
     parseFloatToken,
     parseMultiLineComment,
     parseNumberToken,
@@ -107,16 +108,20 @@ export function tokenize(input: string, filename: string): TokenizerResult {
             continue;
         }
 
+        /*
+            TODO: http://en.cppreference.com/w/c/language/character_constant
+            still need to get the 'u' | 'U' | 'L' prefix
+        */
         if (char === "'") {
-            /*
-               TODO: http://en.cppreference.com/w/c/language/character_constant
-               still need to get the 'u' | 'U' | 'L' prefix
-            */
-            //    const token = parseCharacterLiteral(char, stream, meta);
-            //    tokens.push(token);
-            //    continue;
+            const token = parseCharacterLiteral(char, stream, meta);
+            tokens.push(token);
+            continue;
         }
 
+        /*
+            TODO: http://en.cppreference.com/w/c/language/string_literal
+            still need to get the 'u' | 'U' | 'L' prefix
+        */
         if (char === '"') {
             const token = parseStringLiteral(char, stream, meta);
             tokens.push(token);

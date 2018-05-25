@@ -1,4 +1,5 @@
 import EOFError from './EOFError';
+import InvalidCharacterTokenError from './InvalidCharacterTokenError';
 import InvalidFloatTokenError from './InvalidFloatTokenError';
 import InvalidIntegerTokenError from './InvalidIntegerTokenError';
 import InvalidStringTokenError from './InvalidStringTokenError';
@@ -8,6 +9,7 @@ import PreProcessorError from './PreProcessorError';
 export {
     EOFError,
     PreProcessorError,
+    InvalidCharacterTokenError,
     InvalidFloatTokenError,
     InvalidIntegerTokenError,
     InvalidStringTokenError,

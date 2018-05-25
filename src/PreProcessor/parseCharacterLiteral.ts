@@ -1,8 +1,8 @@
 import { CharacterStream } from '@/CharacterStream';
-import { InvalidStringTokenError } from '@/Error';
+import { InvalidCharacterTokenError } from '@/Error';
 import { escapeCharacterMap } from '@/PreProcessor';
 import { CharacterToken, StringToken, TokenMeta } from '@/Token';
-import { StringTypeInfo } from '@/TypeInfo';
+import { CharacterTypeInfo } from '@/TypeInfo';
 import { character, intToBytes } from '@/util';
 
 const escapes = Object.keys(escapeCharacterMap);
@@ -10,11 +10,11 @@ const escapes = Object.keys(escapeCharacterMap);
 /**
  * #TODO: implement the phases correctly http://en.cppreference.com/w/c/language/string_literal
  */
-export function parseStringLiteral(
-    type: '"',
+export function parseCharacterLiteral(
+    type: "'",
     stream: CharacterStream,
     meta: TokenMeta
-): StringToken {
+): CharacterToken {
     const word: number[] = [];
 
     while (type !== stream.peek()) {
@@ -39,7 +39,7 @@ export function parseStringLiteral(
                             if (character.is.hexadecimal(stream.peek())) {
                                 codepoint_32 += stream.next();
                             } else {
-                                throw new InvalidStringTokenError(
+                                throw new InvalidCharacterTokenError(
                                     `invalid escape sequence in literal string :: expected 4 hexadecimal digits following '\\u', instead got '${
                                         codepoint_32.length
                                     }'`
@@ -64,7 +64,7 @@ export function parseStringLiteral(
                             if (character.is.hexadecimal(stream.peek())) {
                                 codepoint_64 += stream.next();
                             } else {
-                                throw new InvalidStringTokenError(
+                                throw new InvalidCharacterTokenError(
                                     `invalid escape sequence in literal string :: expected 8 hexadecimal digits following '\\U', instead got '${
                                         codepoint_64.length
                                     }'`
@@ -92,7 +92,7 @@ export function parseStringLiteral(
                         }
 
                         if (!hex) {
-                            throw new InvalidStringTokenError(
+                            throw new InvalidCharacterTokenError(
                                 `invalid escape sequence in literal string :: expected at least 1 hexadecimal digit following the sequence '\\x', found 0`
                             );
                         }
@@ -119,7 +119,7 @@ export function parseStringLiteral(
                         }
 
                         if (!octal) {
-                            throw new InvalidStringTokenError(
+                            throw new InvalidCharacterTokenError(
                                 `invalid escape sequence in literal string :: expected valid escape character, instead got ${stream.next()}`
                             );
                         }
@@ -139,8 +139,8 @@ export function parseStringLiteral(
     }
     stream.consume();
     const buffer = Buffer.from(word);
-    const info: StringTypeInfo = { length: buffer.length };
-    return new StringToken(buffer, info, meta);
+    const info: CharacterTypeInfo = { length: buffer.length, width: 8 };
+    return new CharacterToken(buffer, info, meta);
 }
 
-export default parseStringLiteral;
+export default parseCharacterLiteral;
