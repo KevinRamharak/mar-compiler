@@ -7,6 +7,7 @@ export function parseHexadecimalFloat(
     throw new NotImplementedError(
         `this is hard stuff, so it is not implemented yet`
     );
+    // @ts-ignore
     const floatWords = word.split('.').filter(s => s.length !== 0);
     if (floatWords.length === 2) {
         const values = floatWords.map(f => Number.parseInt(f, 16).toString());

@@ -627,10 +627,20 @@ describe('PreProcessor', () => {
             ),
             /* unicode 4 hexes */
             /* #NOTE: These depend on target encoding */
-            // "\\uABCD": new CharacterToken(Buffer.from([/* ... */]), { length: /* ... */}, meta)
+            /* #NOTE: utf-8 encoding assumed */
+            "'\\uABCD'": new CharacterToken(
+                Buffer.from('\uABCD'),
+                { length: Buffer.from('\uABCD').length },
+                meta
+            ),
             /* unicode 8 hexes */
             /* #NOTE: These depend on target encoding */
-            // "\\uABCDEF90": new CharacterToken(Buffer.from([/* ... */]), { length: /* ... */}, meta)
+            /* #NOTE: utf-8 encoding assumed */
+            "'\\U0001F4A9'": new CharacterToken(
+                Buffer.from('\u{1F4A9}'),
+                { length: Buffer.from('\u{1F4A9}').length },
+                meta
+            ),
         };
 
         literals.forEach(literal => {
@@ -719,10 +729,20 @@ describe('PreProcessor', () => {
             ),
             /* unicode 4 hexes */
             /* #NOTE: These depend on target encoding */
-            // "\\uABCD": new CharacterToken(Buffer.from([/* ... */]), { length: /* ... */}, meta)
+            /* #NOTE: utf-8 encoding assumed */
+            '"\\uABCD"': new StringToken(
+                Buffer.from('\uABCD'),
+                { length: Buffer.from('\uABCD').length },
+                meta
+            ),
             /* unicode 8 hexes */
             /* #NOTE: These depend on target encoding */
-            // "\\uABCDEF90": new CharacterToken(Buffer.from([/* ... */]), { length: /* ... */}, meta)
+            /* #NOTE: utf-8 encoding assumed */
+            '"\\U0001F4A9"': new StringToken(
+                Buffer.from('\u{0001F4A9}'),
+                { length: Buffer.from('\u{0001F4A9}').length },
+                meta
+            ),
         };
 
         literals.forEach(literal => {
@@ -736,7 +756,8 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
-
+        //tslint:disable
+        console.log(testString, result.tokens);
         assert(
             keys.length === result.tokens.length,
             `expected '${keys.length}' amount of tokens, instead got '${
@@ -756,16 +777,16 @@ describe('PreProcessor', () => {
             deepStrictEqual(
                 token.value,
                 tests[keys[i]].value,
-                `expected '${keys[i]}' to result into 'token.value' of '${
+                `expected '${
+                    keys[i]
+                }' to result into 'token.value' of '${Array.from(
                     tests[keys[i]].value
-                }', instead got '${token.value}'`
+                )}', instead got '${Array.from(token.value as Buffer)}'`
             );
             deepStrictEqual(
                 token.info,
                 tests[keys[i]].info,
-                `expected '${
-                    keys[i]
-                }' to result in a specific 'CharacterTypeInfo'`
+                `expected '${keys[i]}' to result in a specific 'StringTypeInfo'`
             );
         });
     });

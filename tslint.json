@@ -15,7 +15,8 @@
         "interface-name": false,
         "adjacent-overload-signatures": true,
         "prefer-method-signature": true,
-        "unified-signatures": false
+        "unified-signatures": false,
+        "no-bitwise": false
     },
     "rulesDirectory": []
 }

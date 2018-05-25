@@ -8,6 +8,7 @@ import {
     parseMultiLineComment,
     parseNumberToken,
     parseSingleLineComment,
+    parseStringLiteral,
     sequences,
 } from '.';
 
@@ -106,11 +107,20 @@ export function tokenize(input: string, filename: string): TokenizerResult {
             continue;
         }
 
-        if (char === "'" || char === '"') {
-            const type = char;
-            // const token = parseStringLiteral(type, stream, meta);
-            // tokens.push(token);
-            // continue;
+        if (char === "'") {
+            /*
+               TODO: http://en.cppreference.com/w/c/language/character_constant
+               still need to get the 'u' | 'U' | 'L' prefix
+            */
+            //    const token = parseCharacterLiteral(char, stream, meta);
+            //    tokens.push(token);
+            //    continue;
+        }
+
+        if (char === '"') {
+            const token = parseStringLiteral(char, stream, meta);
+            tokens.push(token);
+            continue;
         }
     }
 
