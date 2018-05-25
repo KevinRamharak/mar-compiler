@@ -4,24 +4,27 @@ export function parseHexadecimalFloat(
     word: string,
     exponential: string
 ): number {
-    throw new NotImplementedError(
-        `this is hard stuff, so it is not implemented yet`
-    );
-    // @ts-ignore
-    const floatWords = word.split('.').filter(s => s.length !== 0);
-    if (floatWords.length === 2) {
-        const values = floatWords.map(f => Number.parseInt(f, 16).toString());
-        return Number.parseFloat(values.join('.') + 'e' + exponential);
-    } else if (floatWords.length === 1) {
-        const value = Number.parseInt(floatWords[0], 16).toString();
-        return Number.parseFloat(value + 'e' + exponential);
-    } else {
-        throw new TypeError(
-            `'floatWords' has to have a length of '1' or '2', instead got '${
-                floatWords.length
-            }'`
-        );
+    const [before, after = ''] = word.split('.');
+
+    const pre = Number.parseInt(before, 16);
+    let post = 0;
+
+    for (let i = 0; i < after.length; i++) {
+        const value = Number.parseInt(after[i], 16);
+        const e = 16 ** (i + 1);
+        post += value / e;
     }
+
+    const total = `${pre}.${post.toString().slice(2)}e${exponential}`;
+    //tslint:disable
+    console.log(total);
+
+    return Number.parseFloat(total);
 }
+
+/**
+ * 0.2301 === 0 + 2/10 + 2/100 + 0 / 1000 + 1 / 10000
+ * 0x0.2301
+ */
 
 export default parseHexadecimalFloat;
