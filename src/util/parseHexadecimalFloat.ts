@@ -16,8 +16,6 @@ export function parseHexadecimalFloat(
     }
 
     const total = `${pre}.${post.toString().slice(2)}e${exponential}`;
-    //tslint:disable
-    console.log(total);
 
     return Number.parseFloat(total);
 }
