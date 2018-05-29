@@ -1,5 +1,7 @@
 import { addNewlineIfNeeded } from './addNewlineIfNeeded';
+import { CharacterSequence } from './CharacterSequence';
 import { escapeCharacterMap } from './escapeCharacterMap';
+import { instructions } from './instructions';
 import { parseCharacterLiteral } from './parseCharacterLiteral';
 import { parseFloatToken } from './parseFloatToken';
 import { parseMultiLineComment } from './parseMultiLineComment';
@@ -13,7 +15,9 @@ import { tokenize, TokenizerResult } from './tokenize';
 
 export {
     addNewlineIfNeeded,
+    CharacterSequence,
     escapeCharacterMap,
+    instructions,
     parseCharacterLiteral,
     parseFloatToken,
     parseMultiLineComment,

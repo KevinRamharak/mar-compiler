@@ -2,7 +2,7 @@ import { deepStrictEqual } from 'assert';
 import { assert } from 'chai';
 import { describe, it } from 'mocha';
 
-import { preProcess } from '@/PreProcessor';
+import { instructions, preProcess, tokenize } from '@/PreProcessor';
 
 import {
     BooleanToken,
@@ -59,6 +59,7 @@ describe('PreProcessor', () => {
     // comments
     it('should ignore single line comments', () => {
         const result = preProcess('// this should be ignored', '[test]');
+        result.tokens.pop(); // pop off newline
         assert(
             result.tokens.length === 0,
             `expected '0' tokens, instead got '${result.tokens.length}'`
@@ -66,6 +67,7 @@ describe('PreProcessor', () => {
     });
     it('should ignore multiline comments', () => {
         const result = preProcess('/* a \n b \n c \n ok */', '[test]');
+        result.tokens.pop(); // pop off newline
         assert(
             result.tokens.length === 0,
             `expected '0' tokens, instead got '${result.tokens.length}'`
@@ -76,24 +78,11 @@ describe('PreProcessor', () => {
             '/* first part /* second part */ /* second part /* third part */*/*/',
             '[test]'
         );
+        result.tokens.pop(); // pop off newline
         assert(
             result.tokens.length === 0,
             `expected '0' tokens, instead got '${result.tokens.length}'`
         );
-    });
-
-    // pre processor
-    it('should throw when the file is not preprocessed and a preprocessor/compiler directive is found', () => {
-        try {
-            const result = preProcess('#include "somefile.h"', '[test]');
-        } catch (e) {
-            assert(
-                e instanceof PreProcessorError,
-                `expected 'PreProcessorError', instead got '${
-                    (e as Error).name
-                }'`
-            );
-        }
     });
 
     // tokens
@@ -129,6 +118,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -171,6 +161,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -229,6 +220,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length - result.errors.length === result.tokens.length,
@@ -287,6 +279,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -345,6 +338,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -405,6 +399,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length - result.errors.length === result.tokens.length,
@@ -459,6 +454,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -503,6 +499,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -659,6 +656,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -763,6 +761,7 @@ describe('PreProcessor', () => {
         const keys = Object.keys(tests);
         const testString = keys.join(' ');
         const result = preProcess(testString, '[test]');
+        result.tokens.pop(); // pop off newline
 
         assert(
             keys.length === result.tokens.length,
@@ -793,6 +792,34 @@ describe('PreProcessor', () => {
                 token.info,
                 tests[keys[i]].info,
                 `expected '${keys[i]}' to result in a specific 'StringTypeInfo'`
+            );
+        });
+    });
+
+    it('should parse pre processor instructions correctly', () => {
+        const testString = instructions
+            .map(i => i.sequence)
+            .map(s => `#${s}`)
+            .join('\n');
+
+        const result = preProcess(testString, '[test]');
+        result.tokens = result.tokens.filter(t => t.type !== TokenType.NewLine);
+
+        assert(
+            instructions.length === result.tokens.length,
+            `expected '${instructions.length}' amount of tokens, instead got '${
+                result.tokens.length
+            }'`
+        );
+
+        result.tokens.forEach((token, i) => {
+            assert(
+                token.type === instructions[i].type,
+                `expected '#${
+                    instructions[i].sequence
+                }' to result into 'token.type' of 'TokenType.${
+                    TokenType[instructions[i].type]
+                }', instead got 'TokenType.${TokenType[token.type]}'`
             );
         });
     });
