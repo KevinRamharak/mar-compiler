@@ -30,7 +30,7 @@ describe('PreProcessor', () => {
     };
 
     // basic
-    it('should accept a string and return a "preProcessResult"', () => {
+    it('should accept a string and return a "preProcessorResult"', () => {
         const result: any = preProcess('int main() { return 0; }', '[test]');
         assert(
             typeof result === 'object',
