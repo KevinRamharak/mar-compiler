@@ -8,7 +8,9 @@ import { parseMultiLineComment } from './parseMultiLineComment';
 import { parseNumberToken } from './parseNumberToken';
 import { parseSingleLineComment } from './parseSingleLineComment';
 import { parseStringLiteral } from './parseStringLiteral';
-import { preProcess, PreProcessorResult } from './preProcess';
+import { performPreProcessing } from './performPreProcessing';
+import { preProcess } from './preProcess';
+import { PreProcessorResult } from './PreProcessorResult';
 import { removeBackslashNewlineSequences } from './removeBackslashNewlineSequences';
 import { sequences } from './sequences';
 import { tokenize, TokenizerResult } from './tokenize';
@@ -24,6 +26,7 @@ export {
     parseNumberToken,
     parseSingleLineComment,
     parseStringLiteral,
+    performPreProcessing,
     preProcess,
     PreProcessorResult,
     removeBackslashNewlineSequences,

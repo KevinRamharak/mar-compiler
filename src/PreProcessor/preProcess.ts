@@ -4,16 +4,11 @@ import { IToken } from '@/Token';
 
 import {
     addNewlineIfNeeded,
+    performPreProcessing,
+    PreProcessorResult,
     removeBackslashNewlineSequences,
     tokenize,
 } from '.';
-
-export interface PreProcessorResult {
-    tokens: IToken[];
-    filename: string;
-    warnings: string[];
-    errors: string[];
-}
 
 /**
  * does the first 4 phases of http://en.cppreference.com/w/c/language/translation_phases
@@ -35,17 +30,9 @@ export function preProcess(
 
     const phase_3 = tokenize(phase_2b, filename);
 
-    warnings.push(...phase_3.warnings);
-    errors.push(...phase_3.errors);
+    const phase_4 = performPreProcessing(phase_3, preDefined, filename);
 
-    // const phase_4 = performPreProcessing(phase_3, preDefined);
-
-    return {
-        errors,
-        filename,
-        tokens: phase_3.tokens,
-        warnings,
-    };
+    return phase_4;
 }
 
 export default preProcess;

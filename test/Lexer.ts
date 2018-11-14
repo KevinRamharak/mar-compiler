@@ -2,7 +2,7 @@ import { deepStrictEqual } from 'assert';
 import { assert } from 'chai';
 import { describe, it } from 'mocha';
 
-import { lex } from '@/Lexer';
+// import { lex } from '@/Lexer';
 
 import {
     BooleanToken,
